@@ -1,55 +1,68 @@
-import { FC, memo } from 'react'
+import { FC, memo, useState } from 'react'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { File } from '@/types/file'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import Dashboard from './Dashboard'
+import Drive from './Drive'
 
 interface TabsContainerProps {
 	members: User[]
 	tags: string[] | undefined
 	tasks: Task[] | undefined
+	drive: File[] | undefined
 }
 
-const TabsContainer: FC<TabsContainerProps> = ({ members, tags, tasks }) => {
+const TabsContainer: FC<TabsContainerProps> = ({
+	members,
+	tags,
+	tasks,
+	drive,
+}) => {
+	const [activeIndex, setActiveIndex] = useState(0)
+
 	const tabs = [
 		{
-			value: 'dashboard',
-			children: <Dashboard members={members} tags={tags} tasks={tasks} />,
+			title: 'Dashboard',
+			children: (
+				<Dashboard
+					members={members}
+					tags={tags}
+					tasks={tasks}
+					drive={drive}
+				/>
+			),
 		},
 		{
-			value: 'tasks',
-			children: <Dashboard members={members} tags={tags} tasks={tasks} />,
+			title: 'Tasks',
+			children: <p>Tasks</p>,
 		},
 		{
-			value: 'communication',
-			children: <Dashboard members={members} tags={tags} tasks={tasks} />,
+			title: 'Communication',
+			children: <p>Communication</p>,
 		},
 		{
-			value: 'drive',
-			children: <Dashboard members={members} tags={tags} tasks={tasks} />,
+			title: 'Drive',
+			children: <Drive drive={drive} />,
 		},
 	]
 
 	return (
-		<Tabs defaultValue={tabs[0].value}>
-			<TabsList className='inline-flex items-center gap-5 mb-5'>
-				{tabs.map((tab) => (
-					<TabsTrigger
-						key={tab.value}
-						value={tab.value}
-						className='capitalize'>
-						{tab.value}
-					</TabsTrigger>
+		<div className='space-y-5'>
+			<div className='flex items-center gap-5'>
+				{tabs.map((tab, i) => (
+					<Button
+						key={tab.title}
+						onClick={() => setActiveIndex(i)}
+						variant={activeIndex === i ? 'primary' : 'ghost'}>
+						{tab.title}
+					</Button>
 				))}
-			</TabsList>
+			</div>
 
-			{tabs.map((tab) => (
-				<TabsContent key={tab.value} value={tab.value}>
-					{tab.children}
-				</TabsContent>
-			))}
-		</Tabs>
+			{tabs[activeIndex].children}
+		</div>
 	)
 }
 

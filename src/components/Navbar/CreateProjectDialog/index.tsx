@@ -72,6 +72,7 @@ const CreateProjectDialog = () => {
 				...values,
 				tasks: [],
 				messages: [],
+				drive: [],
 				createdAt: date,
 				updatedAt: date,
 			})

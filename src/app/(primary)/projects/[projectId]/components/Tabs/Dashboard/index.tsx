@@ -1,8 +1,9 @@
 import { Filter, LayoutGrid, LayoutList, Paperclip } from 'lucide-react'
-import { FC, useState } from 'react'
+import { FC, memo, useState } from 'react'
 
 import AvatarGroup from '@/components/AvatarGroup'
 import { Button } from '@/components/ui/button'
+import { File } from '@/types/file'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import KanbanBoard from '../../KanbanBoard'
@@ -11,14 +12,15 @@ interface DashboardProps {
 	members: User[]
 	tags: string[] | undefined
 	tasks: Task[] | undefined
+	drive: File[] | undefined
 }
 
-const Dashboard: FC<DashboardProps> = ({ members, tags, tasks }) => {
+const Dashboard: FC<DashboardProps> = ({ members, tags, tasks, drive }) => {
 	const [isGrid, setIsGrid] = useState(false)
 	const toggleIsGrid = () => setIsGrid(!isGrid)
 
 	return (
-		<div className='space-y-5'>
+		<>
 			<div className='space-y-2'>
 				<div className='text-gray-500'>Contributors</div>
 
@@ -30,7 +32,7 @@ const Dashboard: FC<DashboardProps> = ({ members, tags, tasks }) => {
 
 						<Button variant='outline'>
 							<Paperclip size={20} className='mr-2' />
-							<span>0 Files</span>
+							<span>{drive?.length} Files</span>
 						</Button>
 					</div>
 
@@ -62,8 +64,8 @@ const Dashboard: FC<DashboardProps> = ({ members, tags, tasks }) => {
 			</div>
 
 			<KanbanBoard tags={tags} data={tasks} members={members} />
-		</div>
+		</>
 	)
 }
 
-export default Dashboard
+export default memo(Dashboard)

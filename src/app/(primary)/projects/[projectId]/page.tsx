@@ -97,6 +97,7 @@ const ProjectDetail = ({ params }: { params: { projectId: string } }) => {
 			</div>
 
 			<Tabs
+				drive={project?.drive}
 				members={members}
 				tasks={project?.tasks}
 				tags={project?.tags}
