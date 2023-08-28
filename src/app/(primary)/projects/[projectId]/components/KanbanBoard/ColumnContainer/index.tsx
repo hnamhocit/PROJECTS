@@ -5,7 +5,7 @@ import { FC, memo, useMemo } from 'react'
 import { Column } from '@/types/Column'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
-import AddCardDialog from './AddCardDialog'
+import AddCard from './AddCard'
 import Card from './Card'
 
 interface ColumnContainerProps {
@@ -76,7 +76,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
 				))}
 			</SortableContext>
 
-			<AddCardDialog
+			<AddCard
 				columnId={column.id}
 				tags={tags}
 				tasks={tasks}

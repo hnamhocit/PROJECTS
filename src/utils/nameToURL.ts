@@ -1,54 +1,29 @@
-export const nameToURL = (name: string, defaultURL: string, mini = false) => {
+export const nameToURL = (name: string, defaultURL: string) => {
 	let res = ''
 	const ext = name.split('.').pop()
 
 	switch (ext) {
 		case 'doc':
 		case 'docx':
-			if (mini) {
-				res = 'word-icon.jpg'
-				break
-			}
-
-			res = 'word.jpg'
+			res = 'word.webp'
 			break
 
 		case 'xls':
 		case 'xlsx':
-			if (mini) {
-				res = 'excel-icon.png'
-				break
-			}
-
 			res = 'excel.png'
 			break
 
 		case 'pdf':
-			if (mini) {
-				res = 'pdf-icon.png'
-				break
-			}
-
-			res = 'pdf.jpg'
+			res = 'pdf.png'
 			break
 
 		case 'ppt':
 		case 'pptx':
-			if (mini) {
-				res = 'powerpoint-icon.png'
-				break
-			}
-
-			res = 'powerpoint.jpg'
+			res = 'powerpoint.png'
 			break
 
 		case 'txt':
-			if (mini) {
-				res = 'txt-icon.png'
-				break
-			}
-
-			res = 'txt.jpg'
+			res = 'txt.png'
 			break
 
 		default:

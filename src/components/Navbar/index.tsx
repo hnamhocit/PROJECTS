@@ -17,7 +17,7 @@ import { selectUser } from '@/redux/features/userSlice'
 import { useAppSelector } from '@/redux/hooks'
 import { Button } from '../ui/button'
 import ActiveLink from './ActiveLink'
-import CreateProjectDialog from './CreateProjectDialog'
+import CreateProject from './CreateProject'
 import UserMenu from './UserMenu'
 
 const pages = [
@@ -85,7 +85,7 @@ const Navbar = () => {
 				</div>
 
 				<div className='flex items-center gap-3'>
-					<CreateProjectDialog />
+					<CreateProject />
 
 					<Button size='icon' variant='ghost'>
 						<Search size={20} />

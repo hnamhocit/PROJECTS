@@ -42,7 +42,7 @@ const formSchema = z.object({
 	teamId: z.string(),
 })
 
-const CreateProjectDialog = () => {
+const CreateProject = () => {
 	const [tag, setTag] = useState('')
 	const [disabled, setDisabled] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
@@ -253,4 +253,4 @@ const CreateProjectDialog = () => {
 	)
 }
 
-export default CreateProjectDialog
+export default CreateProject

@@ -34,7 +34,7 @@ import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import Subtask from '../Subtask'
 
-interface AddCardDialogProps {
+interface AddCardProps {
 	columnId: ColumnId
 	tags: string[] | undefined
 	tasks: Task[]
@@ -57,12 +57,7 @@ const formSchema = z.object({
 	),
 })
 
-const AddCardDialog: FC<AddCardDialogProps> = ({
-	columnId,
-	tasks,
-	tags,
-	members,
-}) => {
+const AddCard: FC<AddCardProps> = ({ columnId, tasks, tags, members }) => {
 	const path = usePathname()
 	const [search, setSearch] = useState('')
 	const [content, setContent] = useState('')
@@ -388,4 +383,4 @@ const AddCardDialog: FC<AddCardDialogProps> = ({
 	)
 }
 
-export default memo(AddCardDialog)
+export default memo(AddCard)
