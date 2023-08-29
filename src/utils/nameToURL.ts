@@ -1,16 +1,16 @@
-export const nameToURL = (name: string, defaultURL: string) => {
+export const nameToURL = (name: string, defaultURL?: string) => {
 	let res = ''
 	const ext = name.split('.').pop()
 
 	switch (ext) {
 		case 'doc':
 		case 'docx':
-			res = 'word.webp'
+			res = 'doc.png'
 			break
 
 		case 'xls':
 		case 'xlsx':
-			res = 'excel.png'
+			res = 'xls.png'
 			break
 
 		case 'pdf':
@@ -19,15 +19,40 @@ export const nameToURL = (name: string, defaultURL: string) => {
 
 		case 'ppt':
 		case 'pptx':
-			res = 'powerpoint.png'
+			res = 'ppt.png'
 			break
 
-		case 'txt':
-			res = 'txt.png'
+		case 'avi':
+		case 'mov':
+		case 'mp4':
+		case 'ogg':
+		case 'wmv':
+		case 'webm':
+			res = 'video.png'
+			break
+
+		case 'mp3':
+		case 'wav':
+		case 'ogg':
+			res = 'audio.png'
+			break
+
+		case 'jpg':
+		case 'png':
+		case 'gif':
+		case 'tff':
+		case 'ico':
+		case 'svg':
+		case 'webp':
+			if (defaultURL) {
+				return defaultURL
+			}
+
+			res = 'image.png'
 			break
 
 		default:
-			return defaultURL as string
+			res = 'file.png'
 	}
 
 	return `/images/${res}`

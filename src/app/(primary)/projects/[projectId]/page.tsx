@@ -100,6 +100,7 @@ const ProjectDetail = ({ params }: { params: { projectId: string } }) => {
 				drive={project?.drive}
 				members={members}
 				tasks={project?.tasks}
+				ownerId={project?.team.ownerId}
 				tags={project?.tags}
 			/>
 		</div>

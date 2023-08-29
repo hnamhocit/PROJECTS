@@ -1,13 +1,12 @@
 import { doc, updateDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { Dot } from 'lucide-react'
+import { Dot, Upload as UploadIcon } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { ChangeEvent, FC, memo, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, FC, memo, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import Dialog from '@/components/Dialog'
-import { Button } from '@/components/ui/button'
 import { DialogTitle } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
 import { db, storage } from '@/config/firebase'
@@ -16,10 +15,12 @@ import { useAppSelector } from '@/redux/hooks'
 import { File as IFile } from '@/types/file'
 import { nameToURL } from '@/utils/nameToURL'
 import { readableFileSize } from '@/utils/readableFileSize'
-import { DriveProps } from '..'
 
-const Upload: FC<DriveProps> = ({ drive }) => {
-	const [blobs, setBlobs] = useState<string[]>([])
+interface UploadProps {
+	drive: IFile[] | undefined
+}
+
+const Upload: FC<UploadProps> = ({ drive }) => {
 	const [uploaded, setUploaded] = useState(0)
 	const [files, setFiles] = useState<FileList>()
 	const { toast } = useToast()
@@ -37,7 +38,6 @@ const Upload: FC<DriveProps> = ({ drive }) => {
 				return URL.createObjectURL(file)
 			})
 
-			setBlobs(blobs)
 			setFiles(files)
 			handleFiles(files)
 		}
@@ -79,7 +79,6 @@ const Upload: FC<DriveProps> = ({ drive }) => {
 				updatedAt: date,
 			})
 
-			setBlobs([])
 			setUploaded(0)
 			setFiles(undefined)
 		} catch (e) {
@@ -87,15 +86,14 @@ const Upload: FC<DriveProps> = ({ drive }) => {
 		}
 	}
 
-	useEffect(() => {
-		return () => {
-			blobs.forEach((blob) => URL.revokeObjectURL(blob))
-		}
-	}, [blobs])
-
 	return (
 		<Dialog
-			trigger={<Button>Upload file</Button>}
+			trigger={
+				<button className='flex items-center justify-center gap-3 p-3 font-medium transition border hover:text-white hover:bg-blue-600 rounded-xl'>
+					<UploadIcon size={20} />
+					<div>UPLOAD</div>
+				</button>
+			}
 			header={<DialogTitle>Upload File</DialogTitle>}>
 			<div className='space-y-5'>
 				<button
@@ -111,7 +109,7 @@ const Upload: FC<DriveProps> = ({ drive }) => {
 
 					<div className='space-y-3 text-center'>
 						<Image
-							src='/images/upload.png'
+							src='/images/photo.png'
 							alt='Upload icon'
 							width={64}
 							height={64}
@@ -134,7 +132,7 @@ const Upload: FC<DriveProps> = ({ drive }) => {
 							key={file.name}
 							className='flex items-center gap-3'>
 							<Image
-								src={nameToURL(file.name, blobs[i])}
+								src={nameToURL(file.name)}
 								alt={file.name}
 								width={40}
 								height={40}

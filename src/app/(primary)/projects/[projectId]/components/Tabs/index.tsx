@@ -12,6 +12,7 @@ interface TabsContainerProps {
 	tags: string[] | undefined
 	tasks: Task[] | undefined
 	drive: File[] | undefined
+	ownerId: string | undefined
 }
 
 const TabsContainer: FC<TabsContainerProps> = ({
@@ -19,6 +20,7 @@ const TabsContainer: FC<TabsContainerProps> = ({
 	tags,
 	tasks,
 	drive,
+	ownerId,
 }) => {
 	const [activeIndex, setActiveIndex] = useState(0)
 
@@ -44,7 +46,9 @@ const TabsContainer: FC<TabsContainerProps> = ({
 		},
 		{
 			title: 'Drive',
-			children: <Drive drive={drive} />,
+			children: (
+				<Drive drive={drive} ownerId={ownerId} members={members} />
+			),
 		},
 	]
 
