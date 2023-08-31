@@ -14,6 +14,7 @@ interface ColumnContainerProps {
 	tasks: Task[]
 	tags: string[] | undefined
 	members: User[]
+	ownerId: string | undefined
 }
 
 const ColumnContainer: FC<ColumnContainerProps> = ({
@@ -22,6 +23,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
 	tasks,
 	tags,
 	members,
+	ownerId,
 }) => {
 	const ownTaskIds = useMemo(() => {
 		return ownTasks.map((task) => task.id) ?? []
@@ -68,6 +70,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
 			<SortableContext items={ownTaskIds}>
 				{ownTasks.map((task) => (
 					<Card
+						ownerId={ownerId}
 						key={task.id}
 						tasks={tasks}
 						task={task}

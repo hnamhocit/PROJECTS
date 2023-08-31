@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { DialogTitle } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
 import { db } from '@/config/firebase'
+import { selectUser } from '@/redux/features/userSlice'
+import { useAppSelector } from '@/redux/hooks'
 import { Subtask as ISubtask, Task } from '@/types/task'
 import { User } from '@/types/user'
 import Subtask from '../Subtask'
@@ -20,9 +22,10 @@ interface CardProps {
 	tasks: Task[]
 	task: Task
 	members: User[]
+	ownerId: string | undefined
 }
 
-const Card: FC<CardProps> = ({ task, members, tasks }) => {
+const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 	const {
 		setNodeRef,
 		attributes,
@@ -39,6 +42,7 @@ const Card: FC<CardProps> = ({ task, members, tasks }) => {
 	})
 	const { toast } = useToast()
 	const [deleting, setDeleting] = useState(false)
+	const user = useAppSelector(selectUser)
 	const path = usePathname()
 
 	const style = {
@@ -163,19 +167,22 @@ const Card: FC<CardProps> = ({ task, members, tasks }) => {
 					))}
 				</div>
 
-				<div className='flex justify-end gap-3'>
-					<Button variant='primary' className='flex-1'>
-						Edit
-					</Button>
+				{(task.assignedFor.includes(user?.uid as string) ||
+					user?.uid === ownerId) && (
+					<div className='flex justify-end gap-3'>
+						<Button variant='primary' className='flex-1'>
+							Edit
+						</Button>
 
-					<Button
-						disabled={deleting}
-						variant='destructive'
-						className='flex-1'
-						onClick={handleDelete}>
-						Delete
-					</Button>
-				</div>
+						<Button
+							disabled={deleting}
+							variant='destructive'
+							className='flex-1'
+							onClick={handleDelete}>
+							Delete
+						</Button>
+					</div>
+				)}
 			</div>
 		</Dialog>
 	)

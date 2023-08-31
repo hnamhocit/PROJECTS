@@ -6,6 +6,7 @@ import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import Dashboard from './Dashboard'
 import Drive from './Drive'
+import Tasks from './Tasks'
 
 interface TabsContainerProps {
 	members: User[]
@@ -33,12 +34,13 @@ const TabsContainer: FC<TabsContainerProps> = ({
 					tags={tags}
 					tasks={tasks}
 					drive={drive}
+					ownerId={ownerId}
 				/>
 			),
 		},
 		{
 			title: 'Tasks',
-			children: <p>Tasks</p>,
+			children: <Tasks tasks={tasks} />,
 		},
 		{
 			title: 'Communication',

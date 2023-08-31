@@ -26,6 +26,7 @@ interface KanbanBoardProps {
 	tags: string[] | undefined
 	data: Task[] | undefined
 	members: User[]
+	ownerId: string | undefined
 }
 
 const defaultCols: Column[] = [
@@ -43,7 +44,12 @@ const defaultCols: Column[] = [
 	},
 ]
 
-const KanbanBoard: FC<KanbanBoardProps> = ({ data, members, tags }) => {
+const KanbanBoard: FC<KanbanBoardProps> = ({
+	data,
+	members,
+	tags,
+	ownerId,
+}) => {
 	const [columns, setColumns] = useState(defaultCols)
 	const [tasks, setTasks] = useState<Task[]>([])
 	const [activeCol, setActiveCol] = useState<Column | null>(null)
@@ -179,6 +185,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ data, members, tags }) => {
 				<SortableContext items={columnIds}>
 					{columns.map((col) => (
 						<ColumnContainer
+							ownerId={ownerId}
 							key={col.id}
 							column={col}
 							ownTasks={tasks.filter(
@@ -196,6 +203,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ data, members, tags }) => {
 				<DragOverlay>
 					{activeCol && (
 						<ColumnContainer
+							ownerId={ownerId}
 							column={activeCol}
 							tasks={tasks}
 							ownTasks={tasks.filter(
@@ -211,6 +219,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ data, members, tags }) => {
 							tasks={tasks}
 							task={activeTask}
 							members={members}
+							ownerId={ownerId}
 						/>
 					)}
 				</DragOverlay>,

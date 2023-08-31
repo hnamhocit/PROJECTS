@@ -13,9 +13,16 @@ interface DashboardProps {
 	tags: string[] | undefined
 	tasks: Task[] | undefined
 	drive: File[] | undefined
+	ownerId: string | undefined
 }
 
-const Dashboard: FC<DashboardProps> = ({ members, tags, tasks, drive }) => {
+const Dashboard: FC<DashboardProps> = ({
+	members,
+	tags,
+	tasks,
+	drive,
+	ownerId,
+}) => {
 	const [isGrid, setIsGrid] = useState(false)
 	const toggleIsGrid = () => setIsGrid(!isGrid)
 
@@ -63,7 +70,12 @@ const Dashboard: FC<DashboardProps> = ({ members, tags, tasks, drive }) => {
 				</div>
 			</div>
 
-			<KanbanBoard tags={tags} data={tasks} members={members} />
+			<KanbanBoard
+				ownerId={ownerId}
+				tags={tags}
+				data={tasks}
+				members={members}
+			/>
 		</>
 	)
 }

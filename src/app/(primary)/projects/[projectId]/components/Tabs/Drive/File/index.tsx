@@ -1,15 +1,12 @@
 import { doc, updateDoc } from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage'
-import { MoreVertical } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { FC, memo, useState } from 'react'
 
 import Dialog from '@/components/Dialog'
-import DropdownMenu from '@/components/DropdownMenu'
 import { Button } from '@/components/ui/button'
 import { DialogTitle } from '@/components/ui/dialog'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { useToast } from '@/components/ui/use-toast'
 import { db, storage } from '@/config/firebase'
 import { selectUser } from '@/redux/features/userSlice'
@@ -19,6 +16,7 @@ import { User } from '@/types/user'
 import { nameToURL } from '@/utils/nameToURL'
 import { readableFileSize } from '@/utils/readableFileSize'
 import Detail from './Detail'
+import Edit from './Edit'
 
 interface FileProps {
 	file: IFile
@@ -29,6 +27,7 @@ interface FileProps {
 
 const File: FC<FileProps> = ({ file, ownerId, drive, members }) => {
 	const [disabled, setDisabled] = useState(false)
+	const [edit, setEdit] = useState(false)
 	const { toast } = useToast()
 
 	const user = useAppSelector(selectUser)
@@ -64,53 +63,67 @@ const File: FC<FileProps> = ({ file, ownerId, drive, members }) => {
 		}
 	}
 
+	const toggleEdit = () => setEdit(!edit)
+
 	return (
 		<Dialog
 			trigger={
-				<div className='flex items-center justify-between p-3 transition border rounded-md hover:-translate-y-2 hover:shadow-lg'>
-					<div className='flex items-center flex-1 gap-3'>
-						<div className='shrink-0'>
-							<Image
-								src={nameToURL(file.name)}
-								alt={file.name}
-								width={48}
-								height={48}
-								className='object-contain w-12 h-12'
-							/>
-						</div>
-
-						<div>
-							<div className='font-medium text-gray-700 line-clamp-1'>
-								{file.name}
-							</div>
-
-							<div className='text-sm text-gray-500'>
-								{readableFileSize(file.size)}
-							</div>
-						</div>
+				<button className='flex items-center gap-3 p-3 transition border rounded-md hover:-translate-y-2 hover:shadow-lg'>
+					<div className='shrink-0'>
+						<Image
+							src={nameToURL(file.name)}
+							alt={file.name}
+							width={40}
+							height={40}
+							className='object-contain w-10 h-10'
+						/>
 					</div>
 
-					<DropdownMenu
-						trigger={
-							<Button size='icon' variant='ghost'>
-								<MoreVertical size={20} />
-							</Button>
-						}>
-						<DropdownMenuItem className='text-blue-600 hover:!bg-blue-600 hover:!text-white'>
-							Edit
-						</DropdownMenuItem>
+					<div className='flex-1 text-left'>
+						<div className='font-medium text-gray-700 line-clamp-1'>
+							{!file.hidden && file.name}
+						</div>
 
-						<DropdownMenuItem
-							disabled={disabled}
-							onClick={handleDelete}
-							className='text-red-600 hover:!bg-red-600 hover:!text-white'>
-							Delete
-						</DropdownMenuItem>
-					</DropdownMenu>
-				</div>
+						<div className='text-sm text-gray-500'>
+							{readableFileSize(file.size)}
+						</div>
+					</div>
+				</button>
 			}
-			header={<DialogTitle>{file.name}</DialogTitle>}>
-			<Detail file={file} members={members} />
+			header={
+				<DialogTitle>
+					{!file.hidden || file.uploadedBy === user?.uid
+						? file.name
+						: 'Content has been hidden'}
+				</DialogTitle>
+			}>
+			{edit ? (
+				<Edit file={file} drive={drive} onClose={toggleEdit} />
+			) : (
+				<div className='space-y-3'>
+					<Detail file={file} members={members} />
+
+					{(file.uploadedBy === user?.uid ||
+						user?.uid === ownerId) && (
+						<div className='flex gap-3'>
+							<Button
+								onClick={toggleEdit}
+								variant='primary'
+								className='flex-1'>
+								Edit
+							</Button>
+
+							<Button
+								disabled={disabled}
+								variant='destructive'
+								className='flex-1'
+								onClick={handleDelete}>
+								Delete
+							</Button>
+						</div>
+					)}
+				</div>
+			)}
 		</Dialog>
 	)
 }
