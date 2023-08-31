@@ -5,11 +5,17 @@ import { FC, memo } from 'react'
 interface CheckboxProps {
 	checked: boolean
 	onChange: () => void
+	disabled?: boolean
 }
 
-const Checkbox: FC<CheckboxProps> = ({ checked, onChange }) => {
+const Checkbox: FC<CheckboxProps> = ({
+	checked,
+	onChange,
+	disabled = false,
+}) => {
 	return (
 		<button
+			disabled={disabled}
 			type='button'
 			className={clsx(
 				'flex items-center justify-center w-5 h-5 border-2 rounded-md transition hover:bg-blue-600 hover:border-blue-600 focus:ring',

@@ -157,7 +157,7 @@ const Auth = () => {
 
 										<FormControl>
 											<Input
-												placeholder='Ex: Shadcn'
+												placeholder='Eg: Shadcn'
 												{...field}
 											/>
 										</FormControl>
@@ -178,7 +178,7 @@ const Auth = () => {
 									<FormControl>
 										<Input
 											type='email'
-											placeholder='Ex: nguyenvana@gmail.com'
+											placeholder='Eg: nguyenvana@gmail.com'
 											{...field}
 										/>
 									</FormControl>
@@ -198,7 +198,7 @@ const Auth = () => {
 									<FormControl>
 										<Input
 											type='password'
-											placeholder='Ex: nguyenvana123'
+											placeholder='Eg: nguyenvana123'
 											{...field}
 										/>
 									</FormControl>

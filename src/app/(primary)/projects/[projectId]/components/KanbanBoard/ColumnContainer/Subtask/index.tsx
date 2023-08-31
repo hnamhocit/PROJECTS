@@ -8,14 +8,26 @@ import { Subtask } from '@/types/task'
 
 interface SubtaskProps {
 	subtask: Subtask
+	changingDisabled?: boolean
+	deletingDisabled?: boolean
 	onChange: () => void | Promise<void>
-	onDelete?: () => void
+	onDelete: () => void | Promise<void>
 }
 
-const Subtask: FC<SubtaskProps> = ({ subtask, onChange, onDelete }) => {
+const Subtask: FC<SubtaskProps> = ({
+	subtask,
+	onChange,
+	onDelete,
+	changingDisabled = false,
+	deletingDisabled = false,
+}) => {
 	return (
 		<div className='flex items-center gap-4 p-3 transition bg-blue-50 rounded-xl hover:bg-blue-100'>
-			<Checkbox checked={subtask.isComplete} onChange={onChange} />
+			<Checkbox
+				disabled={changingDisabled}
+				checked={subtask.isComplete}
+				onChange={onChange}
+			/>
 
 			<p
 				className={clsx(
@@ -27,11 +39,13 @@ const Subtask: FC<SubtaskProps> = ({ subtask, onChange, onDelete }) => {
 				{subtask.content}
 			</p>
 
-			{onDelete && (
-				<Button variant='ghost' size='icon' onClick={onDelete}>
-					<X size={16} />
-				</Button>
-			)}
+			<Button
+				disabled={deletingDisabled}
+				variant='ghost'
+				size='icon'
+				onClick={onDelete}>
+				<X size={16} />
+			</Button>
 		</div>
 	)
 }

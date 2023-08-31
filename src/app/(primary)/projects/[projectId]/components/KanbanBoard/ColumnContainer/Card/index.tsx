@@ -14,7 +14,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { db } from '@/config/firebase'
 import { selectUser } from '@/redux/features/userSlice'
 import { useAppSelector } from '@/redux/hooks'
-import { Subtask as ISubtask, Task } from '@/types/task'
+import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import Subtask from '../Subtask'
 
@@ -41,28 +41,34 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 		},
 	})
 	const { toast } = useToast()
-	const [deleting, setDeleting] = useState(false)
+	const [disabled, setDisabled] = useState(false)
+	const [changingDisabled, setChangingDisabled] = useState(false)
+	const [deletingDisabled, setDeletingDisabled] = useState(false)
+
 	const user = useAppSelector(selectUser)
 	const path = usePathname()
+	const projectId = path.split('/')[2]
 
 	const style = {
 		transition,
 		transform: CSS.Transform.toString(transform),
 	}
 
-	const handleChange = async (sub: ISubtask) => {
+	const handleChangeSubtask = async (id: string) => {
 		try {
+			setChangingDisabled(true)
+
 			const date = new Date().getTime()
 
-			await updateDoc(doc(db, 'projects', path.split('/')[2]), {
+			await updateDoc(doc(db, 'projects', projectId), {
 				tasks: tasks.map((task) => {
 					return {
 						...task,
 						subtasks: task.subtasks.map((s) => {
-							if (s.id === sub.id) {
+							if (s.id === id) {
 								return {
-									...sub,
-									isComplete: !sub.isComplete,
+									...s,
+									isComplete: !s.isComplete,
 									updatedAt: date,
 								}
 							}
@@ -73,24 +79,52 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 				}),
 				updatedAt: date,
 			})
+
+			setChangingDisabled(false)
 		} catch (e) {
+			setChangingDisabled(false)
+			toast({ variant: 'destructive', description: (e as Error).message })
+		}
+	}
+
+	const handleDeleteSubtask = async (id: string) => {
+		try {
+			setDeletingDisabled(true)
+
+			await updateDoc(doc(db, 'projects', projectId), {
+				tasks: tasks.map((t) => {
+					if (t.id === task.id) {
+						return {
+							...t,
+							subtasks: t.subtasks.filter((sub) => sub.id !== id),
+						}
+					}
+
+					return t
+				}),
+				updatedAt: new Date().getTime(),
+			})
+
+			setDeletingDisabled(false)
+		} catch (e) {
+			setDeletingDisabled(false)
 			toast({ variant: 'destructive', description: (e as Error).message })
 		}
 	}
 
 	const handleDelete = async () => {
 		try {
-			setDeleting(true)
+			setDisabled(true)
 
 			await updateDoc(doc(db, 'projects', path.split('/')[2]), {
 				tasks: tasks.filter((t) => t.id !== task.id),
 				updatedAt: new Date().getTime(),
 			})
 
-			setDeleting(false)
+			setDisabled(false)
 		} catch (e) {
 			toast({ variant: 'destructive', description: (e as Error).message })
-			setDeleting(false)
+			setDisabled(false)
 		}
 	}
 
@@ -162,7 +196,10 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 						<Subtask
 							key={sub.id}
 							subtask={sub}
-							onChange={() => handleChange(sub)}
+							changingDisabled={changingDisabled}
+							deletingDisabled={deletingDisabled}
+							onDelete={() => handleDeleteSubtask(sub.id)}
+							onChange={() => handleChangeSubtask(sub.id)}
 						/>
 					))}
 				</div>
@@ -175,7 +212,7 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 						</Button>
 
 						<Button
-							disabled={deleting}
+							disabled={disabled}
 							variant='destructive'
 							className='flex-1'
 							onClick={handleDelete}>
