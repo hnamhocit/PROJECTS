@@ -40,7 +40,7 @@ const TabsContainer: FC<TabsContainerProps> = ({
 		},
 		{
 			title: 'Tasks',
-			children: <Tasks tasks={tasks} />,
+			children: <Tasks tasks={tasks} tags={tags} />,
 		},
 		{
 			title: 'Communication',

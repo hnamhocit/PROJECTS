@@ -70,8 +70,9 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
 			<SortableContext items={ownTaskIds}>
 				{ownTasks.map((task) => (
 					<Card
-						ownerId={ownerId}
 						key={task.id}
+						tags={tags}
+						ownerId={ownerId}
 						tasks={tasks}
 						task={task}
 						members={members}

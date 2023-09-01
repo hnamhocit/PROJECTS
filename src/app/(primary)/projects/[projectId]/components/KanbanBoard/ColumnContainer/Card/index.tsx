@@ -16,16 +16,18 @@ import { selectUser } from '@/redux/features/userSlice'
 import { useAppSelector } from '@/redux/hooks'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
-import Subtask from '../Subtask'
+import EditCard from '../../../EditCard'
+import Subtask from '../../../Subtask'
 
 interface CardProps {
 	tasks: Task[]
 	task: Task
 	members: User[]
 	ownerId: string | undefined
+	tags: string[] | undefined
 }
 
-const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
+const Card: FC<CardProps> = ({ task, members, tasks, ownerId, tags }) => {
 	const {
 		setNodeRef,
 		attributes,
@@ -44,6 +46,7 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 	const [disabled, setDisabled] = useState(false)
 	const [changingDisabled, setChangingDisabled] = useState(false)
 	const [deletingDisabled, setDeletingDisabled] = useState(false)
+	const [edit, setEdit] = useState(false)
 
 	const user = useAppSelector(selectUser)
 	const path = usePathname()
@@ -53,6 +56,8 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 		transition,
 		transform: CSS.Transform.toString(transform),
 	}
+
+	const toggleEdit = () => setEdit(!edit)
 
 	const handleChangeSubtask = async (id: string) => {
 		try {
@@ -188,39 +193,51 @@ const Card: FC<CardProps> = ({ task, members, tasks, ownerId }) => {
 					</div>
 				</div>
 			}>
-			<div className='space-y-3'>
-				<p className='text-sm text-gray-500'>{task.description}</p>
+			{edit ? (
+				<EditCard
+					tasks={tasks}
+					task={task}
+					onClose={toggleEdit}
+					tags={tags}
+				/>
+			) : (
+				<div className='space-y-3'>
+					<p className='text-sm text-gray-500'>{task.description}</p>
 
-				<div className='space-y-2'>
-					{task.subtasks.map((sub) => (
-						<Subtask
-							key={sub.id}
-							subtask={sub}
-							changingDisabled={changingDisabled}
-							deletingDisabled={deletingDisabled}
-							onDelete={() => handleDeleteSubtask(sub.id)}
-							onChange={() => handleChangeSubtask(sub.id)}
-						/>
-					))}
-				</div>
-
-				{(task.assignedFor.includes(user?.uid as string) ||
-					user?.uid === ownerId) && (
-					<div className='flex justify-end gap-3'>
-						<Button variant='primary' className='flex-1'>
-							Edit
-						</Button>
-
-						<Button
-							disabled={disabled}
-							variant='destructive'
-							className='flex-1'
-							onClick={handleDelete}>
-							Delete
-						</Button>
+					<div className='space-y-2'>
+						{task.subtasks.map((sub) => (
+							<Subtask
+								key={sub.id}
+								subtask={sub}
+								changingDisabled={changingDisabled}
+								deletingDisabled={deletingDisabled}
+								onDelete={() => handleDeleteSubtask(sub.id)}
+								onChange={() => handleChangeSubtask(sub.id)}
+							/>
+						))}
 					</div>
-				)}
-			</div>
+
+					{(task.assignedFor.includes(user?.uid as string) ||
+						user?.uid === ownerId) && (
+						<div className='flex justify-end gap-3'>
+							<Button
+								onClick={toggleEdit}
+								variant='primary'
+								className='flex-1'>
+								Edit
+							</Button>
+
+							<Button
+								disabled={disabled}
+								variant='destructive'
+								className='flex-1'
+								onClick={handleDelete}>
+								Delete
+							</Button>
+						</div>
+					)}
+				</div>
+			)}
 		</Dialog>
 	)
 }

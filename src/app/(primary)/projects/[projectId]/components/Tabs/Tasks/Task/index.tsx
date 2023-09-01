@@ -1,22 +1,24 @@
 import { doc, updateDoc } from 'firebase/firestore'
-import { MoreHorizontal } from 'lucide-react'
+import { Settings, Trash2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { FC, memo, useState } from 'react'
 
-import DropdownMenu from '@/components/DropdownMenu'
+import Dialog from '@/components/Dialog'
 import { Button } from '@/components/ui/button'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { DialogTitle } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
 import { db } from '@/config/firebase'
 import { Task as ITask } from '@/types/task'
-import Subtask from '../../../KanbanBoard/ColumnContainer/Subtask'
+import EditCard from '../../../EditCard'
+import Subtask from '../../../Subtask'
 
 interface TaskProps {
 	task: ITask
-	tasks: ITask[]
+	tasks: ITask[] | undefined
+	tags: string[] | undefined
 }
 
-const Task: FC<TaskProps> = ({ task, tasks }) => {
+const Task: FC<TaskProps> = ({ task, tasks, tags }) => {
 	const [disabled, setDisabled] = useState(false)
 	const [deletingDisabled, setDeletingDisabled] = useState(false)
 	const [changingDisabled, setChangingDisabled] = useState(false)
@@ -30,7 +32,7 @@ const Task: FC<TaskProps> = ({ task, tasks }) => {
 			setDisabled(true)
 
 			await updateDoc(doc(db, 'projects', projectId), {
-				tasks: tasks.filter((t) => t.id !== task.id),
+				tasks: tasks?.filter((t) => t.id !== task.id),
 				updatedAt: new Date().getTime(),
 			})
 
@@ -47,7 +49,7 @@ const Task: FC<TaskProps> = ({ task, tasks }) => {
 
 			const date = new Date().getTime()
 			await updateDoc(doc(db, 'projects', projectId), {
-				tasks: tasks.map((t) => {
+				tasks: tasks?.map((t) => {
 					if (t.id === task.id) {
 						return {
 							...t,
@@ -82,7 +84,7 @@ const Task: FC<TaskProps> = ({ task, tasks }) => {
 			setDeletingDisabled(true)
 
 			await updateDoc(doc(db, 'projects', projectId), {
-				tasks: tasks.map((t) => {
+				tasks: tasks?.map((t) => {
 					if (t.id === task.id) {
 						return {
 							...t,
@@ -110,19 +112,21 @@ const Task: FC<TaskProps> = ({ task, tasks }) => {
 					<div className='text-gray-500'>{task.description}</div>
 				</div>
 
-				<DropdownMenu
-					trigger={
-						<Button size='icon' variant='ghost'>
-							<MoreHorizontal size={20} />
-						</Button>
-					}>
-					<DropdownMenuItem>Edit</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={disabled}
-						onClick={handleDelete}>
-						Delete
-					</DropdownMenuItem>
-				</DropdownMenu>
+				<div className='flex items-center gap-3'>
+					<Dialog
+						trigger={
+							<Button size='icon' variant='outline'>
+								<Settings size={20} />
+							</Button>
+						}
+						header={<DialogTitle>{task.title}</DialogTitle>}>
+						<EditCard task={task} tasks={tasks} tags={tags} />
+					</Dialog>
+
+					<Button size='icon' variant='outline'>
+						<Trash2 size={20} />
+					</Button>
+				</div>
 			</div>
 
 			<div className='space-y-2'>

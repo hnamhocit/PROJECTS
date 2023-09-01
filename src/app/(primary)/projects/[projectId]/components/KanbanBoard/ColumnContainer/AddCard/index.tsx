@@ -32,7 +32,8 @@ import { db } from '@/config/firebase'
 import { ColumnId } from '@/types/Column'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
-import Subtask from '../Subtask'
+import Subtask from '../../../Subtask'
+import AddSubtask from '../AddSubtask'
 
 interface AddCardProps {
 	columnId: ColumnId
@@ -60,7 +61,6 @@ const formSchema = z.object({
 const AddCard: FC<AddCardProps> = ({ columnId, tasks, tags, members }) => {
 	const path = usePathname()
 	const [search, setSearch] = useState('')
-	const [content, setContent] = useState('')
 	const [disabled, setDisabled] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -319,49 +319,23 @@ const AddCard: FC<AddCardProps> = ({ columnId, tasks, tags, members }) => {
 											/>
 										))}
 
-										<div className='flex items-center gap-3'>
-											<Input
-												placeholder='Enter task...'
-												value={content}
-												onChange={(e) => {
-													if (
-														e.target.value.startsWith(
-															' '
-														)
-													)
-														return
+										<AddSubtask
+											onChange={(content) => {
+												const date =
+													new Date().getTime()
 
-													setContent(e.target.value)
-												}}
-											/>
-
-											<Button
-												type='button'
-												variant='secondary'
-												size='icon'
-												onClick={() => {
-													if (content.length === 0)
-														return
-
-													const date =
-														new Date().getTime()
-
-													field.onChange([
-														...field.value,
-														{
-															id: uuidv4(),
-															content,
-															isComplete: false,
-															createdAt: date,
-															updatedAt: date,
-														},
-													])
-
-													setContent('')
-												}}>
-												<Plus size={20} />
-											</Button>
-										</div>
+												field.onChange([
+													...field.value,
+													{
+														id: uuidv4(),
+														content,
+														isComplete: false,
+														createdAt: date,
+														updatedAt: date,
+													},
+												])
+											}}
+										/>
 									</div>
 								</FormControl>
 
