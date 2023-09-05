@@ -3,7 +3,7 @@ export type Message = {
 	content: string
 	seenBy: string[]
 	senderId: string
-	driveLinks?: string[]
+	recall: boolean
 	createdAt: string
 	updatedAt: string
 }

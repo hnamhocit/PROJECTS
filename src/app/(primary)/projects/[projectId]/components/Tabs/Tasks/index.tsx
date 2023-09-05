@@ -8,33 +8,37 @@ import Task from './Task'
 interface TasksProps {
 	tasks: ITask[] | undefined
 	tags: string[] | undefined
+	assignedFor?: boolean
 }
 
-const Tasks: FC<TasksProps> = ({ tasks, tags }) => {
+const Tasks: FC<TasksProps> = ({ tasks, tags, assignedFor = true }) => {
 	const user = useAppSelector(selectUser)
 	const cols = [
 		{
 			title: 'To Do',
-			tasks: tasks?.filter(
-				(task) =>
-					task.columnId === 'todo' &&
-					task.assignedFor.includes(user?.uid as string)
+			tasks: tasks?.filter((task) =>
+				assignedFor
+					? task.columnId === 'todo' &&
+					  task.assignedFor.includes(user?.uid as string)
+					: task.columnId === 'todo'
 			),
 		},
 		{
 			title: 'In Progress',
-			tasks: tasks?.filter(
-				(task) =>
-					task.columnId === 'inProgress' &&
-					task.assignedFor.includes(user?.uid as string)
+			tasks: tasks?.filter((task) =>
+				assignedFor
+					? task.columnId === 'inProgress' &&
+					  task.assignedFor.includes(user?.uid as string)
+					: task.columnId === 'inProgress'
 			),
 		},
 		{
 			title: 'Done',
-			tasks: tasks?.filter(
-				(task) =>
-					task.columnId === 'done' &&
-					task.assignedFor.includes(user?.uid as string)
+			tasks: tasks?.filter((task) =>
+				assignedFor
+					? task.columnId === 'done' &&
+					  task.assignedFor.includes(user?.uid as string)
+					: task.columnId === 'done'
 			),
 		},
 	]

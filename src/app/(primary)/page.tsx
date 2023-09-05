@@ -59,7 +59,7 @@ export default function Home() {
 	if (loading) return <Loading />
 
 	return (
-		<div className='space-y-5'>
+		<div className='p-4 space-y-5'>
 			<div className='space-y-3'>
 				<div className='flex items-center justify-between'>
 					<div className='text-xl font-bold'>Your project</div>

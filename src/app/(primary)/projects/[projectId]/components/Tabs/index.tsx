@@ -1,28 +1,19 @@
 import { FC, memo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { File } from '@/types/file'
-import { Task } from '@/types/task'
+import { ProjectWithTeam } from '@/types/projectWithTeam'
 import { User } from '@/types/user'
+import Link from 'next/link'
 import Dashboard from './Dashboard'
 import Drive from './Drive'
 import Tasks from './Tasks'
 
 interface TabsContainerProps {
+	project: ProjectWithTeam | undefined
 	members: User[]
-	tags: string[] | undefined
-	tasks: Task[] | undefined
-	drive: File[] | undefined
-	ownerId: string | undefined
 }
 
-const TabsContainer: FC<TabsContainerProps> = ({
-	members,
-	tags,
-	tasks,
-	drive,
-	ownerId,
-}) => {
+const TabsContainer: FC<TabsContainerProps> = ({ project, members }) => {
 	const [activeIndex, setActiveIndex] = useState(0)
 
 	const tabs = [
@@ -31,25 +22,26 @@ const TabsContainer: FC<TabsContainerProps> = ({
 			children: (
 				<Dashboard
 					members={members}
-					tags={tags}
-					tasks={tasks}
-					drive={drive}
-					ownerId={ownerId}
+					tags={project?.tags}
+					tasks={project?.tasks}
+					drive={project?.drive}
+					ownerId={project?.team.ownerId}
 				/>
 			),
 		},
 		{
 			title: 'Tasks',
-			children: <Tasks tasks={tasks} tags={tags} />,
+			children: <Tasks tasks={project?.tasks} tags={project?.tags} />,
 		},
-		{
-			title: 'Communication',
-			children: <p>Communication</p>,
-		},
+
 		{
 			title: 'Drive',
 			children: (
-				<Drive drive={drive} ownerId={ownerId} members={members} />
+				<Drive
+					drive={project?.drive}
+					ownerId={project?.team.ownerId}
+					members={members}
+				/>
 			),
 		},
 	]
@@ -65,6 +57,10 @@ const TabsContainer: FC<TabsContainerProps> = ({
 						{tab.title}
 					</Button>
 				))}
+
+				<Link href={`/projects/${project?.id}/communication`}>
+					<Button variant='ghost'>Communication</Button>
+				</Link>
 			</div>
 
 			{tabs[activeIndex].children}

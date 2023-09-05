@@ -7,6 +7,7 @@ import { File } from '@/types/file'
 import { Task } from '@/types/task'
 import { User } from '@/types/user'
 import KanbanBoard from '../../KanbanBoard'
+import Tasks from '../Tasks'
 
 interface DashboardProps {
 	members: User[]
@@ -23,7 +24,7 @@ const Dashboard: FC<DashboardProps> = ({
 	drive,
 	ownerId,
 }) => {
-	const [isGrid, setIsGrid] = useState(false)
+	const [isGrid, setIsGrid] = useState(true)
 	const toggleIsGrid = () => setIsGrid(!isGrid)
 
 	return (
@@ -70,12 +71,16 @@ const Dashboard: FC<DashboardProps> = ({
 				</div>
 			</div>
 
-			<KanbanBoard
-				ownerId={ownerId}
-				tags={tags}
-				data={tasks}
-				members={members}
-			/>
+			{isGrid ? (
+				<KanbanBoard
+					ownerId={ownerId}
+					tags={tags}
+					data={tasks}
+					members={members}
+				/>
+			) : (
+				<Tasks tasks={tasks} tags={tags} assignedFor={false} />
+			)}
 		</>
 	)
 }
